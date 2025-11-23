@@ -1,0 +1,39 @@
+{
+  "name": "ai-patient-scorecard",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "next": "14.2.0",
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0",
+    "twilio": "^5.0.0",
+    "openai": "^4.28.0",
+    "@supabase/supabase-js": "^2.39.0",
+    "ws": "^8.16.0",
+    "uuid": "^9.0.1",
+    "date-fns": "^3.3.0",
+    "jspdf": "^2.5.1",
+    "lucide-react": "^0.344.0",
+    "zod": "^3.22.4",
+    "nanoid": "^5.0.5"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.0",
+    "@types/node": "^20.11.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@types/ws": "^8.5.10",
+    "@types/uuid": "^9.0.8",
+    "tailwindcss": "^3.4.0",
+    "postcss": "^8.4.0",
+    "autoprefixer": "^10.4.0",
+    "eslint": "^8.56.0",
+    "eslint-config-next": "14.2.0"
+  }
+}
