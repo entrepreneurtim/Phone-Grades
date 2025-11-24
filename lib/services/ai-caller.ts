@@ -1,4 +1,5 @@
 import OpenAI from 'openai';
+import type { ChatCompletionMessageParam } from 'openai/resources/chat/completions';
 import { CallerState, TranscriptSegment, PracticeInfo } from '@/lib/types';
 
 const openai = new OpenAI({
@@ -8,7 +9,7 @@ const openai = new OpenAI({
 export class AICallerService {
   private state: CallerState;
   private practiceInfo: PracticeInfo;
-  private conversationHistory: Array<{ role: string; content: string }>;
+  private conversationHistory: ChatCompletionMessageParam[];
 
   constructor(practiceInfo: PracticeInfo) {
     this.practiceInfo = practiceInfo;
