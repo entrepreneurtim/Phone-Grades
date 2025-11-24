@@ -22,100 +22,65 @@ export default function LiveCallInterface({
   const [duration, setDuration] = useState(0);
   const [transcript, setTranscript] = useState<TranscriptSegment[]>([]);
   const [audioLevel, setAudioLevel] = useState(0);
-  const [showIVRAssist, setShowIVRAssist] = useState(false);
-  const [ivrOptions, setIVROptions] = useState<string[]>([]);
 
-  const audioRef = useRef<HTMLAudioElement>(null);
-  const wsRef = useRef<WebSocket | null>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const pollRef = useRef<NodeJS.Timeout | null>(null);
   const transcriptEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Connect to WebSocket for real-time updates
-    const ws = new WebSocket(
-      `${process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:3000'}/api/call/stream?callId=${callId}`
-    );
+    // Poll for call status updates (better for Vercel than WebSocket)
+    const pollStatus = async () => {
+      try {
+        const response = await fetch(`/api/call/stream?callId=${callId}`);
+        const data = await response.json();
 
-    ws.onopen = () => {
-      console.log('WebSocket connected');
+        if (data.success) {
+          const newStatus = data.data.status;
+          setStatus(newStatus);
+          setTranscript(data.data.transcript || []);
+
+          // Start timer when call is in progress
+          if (newStatus === 'in-progress' && !timerRef.current) {
+            startTimer();
+          }
+
+          // Stop timer and redirect when completed
+          if ((newStatus === 'completed' || newStatus === 'failed') && timerRef.current) {
+            stopTimer();
+            if (pollRef.current) {
+              clearInterval(pollRef.current);
+            }
+            if (newStatus === 'completed') {
+              setTimeout(onCallComplete, 2000);
+            }
+          }
+
+          // Update audio visualization (simulate based on status)
+          if (newStatus === 'in-progress') {
+            setAudioLevel(Math.random() * 0.8 + 0.2);
+          } else {
+            setAudioLevel(0.1);
+          }
+        }
+      } catch (error) {
+        console.error('Error polling call status:', error);
+      }
     };
 
-    ws.onmessage = (event) => {
-      const message = JSON.parse(event.data);
-      handleWebSocketMessage(message);
-    };
-
-    ws.onerror = (error) => {
-      console.error('WebSocket error:', error);
-    };
-
-    ws.onclose = () => {
-      console.log('WebSocket closed');
-    };
-
-    wsRef.current = ws;
+    // Poll every 2 seconds
+    pollStatus(); // Initial poll
+    pollRef.current = setInterval(pollStatus, 2000);
 
     return () => {
-      ws.close();
       if (timerRef.current) clearInterval(timerRef.current);
+      if (pollRef.current) clearInterval(pollRef.current);
     };
-  }, [callId]);
+  }, [callId, onCallComplete]);
 
   useEffect(() => {
     // Auto-scroll transcript
     transcriptEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [transcript]);
-
-  const handleWebSocketMessage = (message: any) => {
-    switch (message.type) {
-      case 'status':
-        setStatus(message.data.status);
-        if (message.data.status === 'in-progress' && !timerRef.current) {
-          startTimer();
-        } else if (message.data.status === 'completed' || message.data.status === 'failed') {
-          stopTimer();
-          if (message.data.status === 'completed') {
-            setTimeout(onCallComplete, 2000);
-          }
-        }
-        break;
-
-      case 'audio':
-        // Handle audio streaming
-        playAudioChunk(message.data);
-        break;
-
-      case 'transcript':
-        setTranscript((prev) => [...prev, message.data]);
-        break;
-
-      case 'audio_level':
-        setAudioLevel(message.data.level);
-        break;
-
-      case 'ivr':
-        if (message.data.needsAssist) {
-          setShowIVRAssist(true);
-          setIVROptions(message.data.options || ['1', '2', '3', '4', '5']);
-        } else {
-          setShowIVRAssist(false);
-        }
-        break;
-
-      case 'error':
-        console.error('Call error:', message.data);
-        setStatus('failed');
-        break;
-    }
-  };
-
-  const playAudioChunk = (audioData: any) => {
-    // This would handle actual audio streaming
-    // For now, we'll simulate it
-    if (!isMuted && audioRef.current) {
-      // Play audio chunk
-    }
-  };
 
   const startTimer = () => {
     timerRef.current = setInterval(() => {
@@ -128,16 +93,6 @@ export default function LiveCallInterface({
       clearInterval(timerRef.current);
       timerRef.current = null;
     }
-  };
-
-  const handleIVRSelect = async (option: string) => {
-    // Send DTMF digit
-    await fetch('/api/call/ivr', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ callId, digit: option }),
-    });
-    setShowIVRAssist(false);
   };
 
   const formatDuration = (seconds: number) => {
@@ -165,14 +120,14 @@ export default function LiveCallInterface({
       case 'in-progress':
         return {
           icon: <Phone />,
-          text: 'Call in progress',
+          text: 'Call in progress - AI is speaking with your receptionist',
           color: 'text-green-600',
           bg: 'bg-green-50',
         };
       case 'completed':
         return {
           icon: <CheckCircle />,
-          text: 'Call completed',
+          text: 'Call completed successfully!',
           color: 'text-green-600',
           bg: 'bg-green-50',
         };
@@ -213,21 +168,13 @@ export default function LiveCallInterface({
                 {formatDuration(duration)}
               </span>
             </div>
-            <button
-              onClick={() => setIsMuted(!isMuted)}
-              className={`p-3 rounded-lg ${
-                isMuted ? 'bg-red-100 text-red-600' : 'bg-gray-200 text-gray-700'
-              } hover:opacity-80 transition-opacity`}
-            >
-              {isMuted ? <VolumeX /> : <Volume2 />}
-            </button>
           </div>
         </div>
       </div>
 
       {/* Audio Waveform Visualization */}
       <div className="card">
-        <h3 className="text-lg font-semibold mb-4">Live Audio</h3>
+        <h3 className="text-lg font-semibold mb-4">Live Audio Visualization</h3>
         <div className="flex items-center gap-1 h-24 justify-center">
           {Array.from({ length: 40 }).map((_, i) => {
             const height = status === 'in-progress'
@@ -242,38 +189,25 @@ export default function LiveCallInterface({
             );
           })}
         </div>
+        <p className="text-sm text-gray-600 text-center mt-3">
+          {status === 'in-progress'
+            ? 'AI is actively conversing with your receptionist'
+            : 'Waiting for conversation to start...'}
+        </p>
       </div>
-
-      {/* IVR Assist Modal */}
-      {showIVRAssist && (
-        <div className="card bg-yellow-50 border-yellow-300">
-          <h3 className="text-lg font-semibold mb-3 text-yellow-900">
-            Phone Menu Detected
-          </h3>
-          <p className="text-sm text-yellow-800 mb-4">
-            Your practice uses a phone menu. Click the option that leads to the front
-            desk or new patient line:
-          </p>
-          <div className="flex gap-2">
-            {ivrOptions.map((option) => (
-              <button
-                key={option}
-                onClick={() => handleIVRSelect(option)}
-                className="btn-primary"
-              >
-                Press {option}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
 
       {/* Live Transcript */}
       <div className="card">
         <h3 className="text-lg font-semibold mb-4">Live Transcript</h3>
         <div className="space-y-3 max-h-96 overflow-y-auto">
           {transcript.length === 0 ? (
-            <p className="text-gray-500 italic">Waiting for conversation to start...</p>
+            <div className="text-center py-8">
+              <Loader2 className="w-8 h-8 text-gray-400 animate-spin mx-auto mb-2" />
+              <p className="text-gray-500 italic">Waiting for conversation to start...</p>
+              <p className="text-xs text-gray-400 mt-1">
+                The AI will begin speaking once your receptionist answers
+              </p>
+            </div>
           ) : (
             transcript.map((segment, index) => (
               <div
@@ -286,13 +220,18 @@ export default function LiveCallInterface({
               >
                 <div className="flex items-start justify-between mb-1">
                   <span className="font-semibold text-sm">
-                    {segment.speaker === 'ai' ? 'AI Caller' : 'Front Desk'}
+                    {segment.speaker === 'ai' ? '🤖 AI Caller' : '👤 Front Desk'}
                   </span>
                   <span className="text-xs text-gray-500">
                     {formatDuration(Math.floor(segment.timestamp))}
                   </span>
                 </div>
                 <p className="text-gray-800">{segment.text}</p>
+                {segment.confidence && (
+                  <p className="text-xs text-gray-500 mt-1">
+                    Confidence: {(segment.confidence * 100).toFixed(0)}%
+                  </p>
+                )}
               </div>
             ))
           )}
@@ -300,8 +239,21 @@ export default function LiveCallInterface({
         </div>
       </div>
 
-      {/* Hidden audio element */}
-      <audio ref={audioRef} />
+      {/* Info Box */}
+      <div className="card bg-blue-50 border-blue-200">
+        <div className="flex items-start gap-3">
+          <div className="text-blue-600">ℹ️</div>
+          <div className="text-sm text-blue-900">
+            <p className="font-semibold mb-1">How this works:</p>
+            <ul className="list-disc list-inside space-y-1 text-blue-800">
+              <li>Our AI caller is speaking with your receptionist using natural voice</li>
+              <li>The conversation is being transcribed in real-time</li>
+              <li>After the call completes, you'll see a detailed scorecard</li>
+              <li>The entire interaction takes about 2-4 minutes</li>
+            </ul>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
