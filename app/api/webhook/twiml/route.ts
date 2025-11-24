@@ -12,15 +12,10 @@ export async function POST(request: NextRequest) {
     // Get the base URL for webhooks
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
 
-    // Generate TwiML response
+    // Generate TwiML response that starts the AI conversation
     const twiml = `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
-  <Say voice="alice">Connecting you now.</Say>
-  <Start>
-    <Stream url="wss://${baseUrl.replace('https://', '').replace('http://', '')}/api/webhook/media-stream?callId=${callId}" />
-  </Start>
-  <Pause length="180" />
-  <Say voice="alice">Thank you for your time. Goodbye.</Say>
+  <Redirect>${baseUrl}/api/call/conversation?callId=${callId}&amp;step=0</Redirect>
 </Response>`;
 
     return new NextResponse(twiml, {
