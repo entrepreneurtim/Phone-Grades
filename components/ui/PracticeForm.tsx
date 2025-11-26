@@ -53,44 +53,47 @@ export default function PracticeForm({ onSubmit, isLoading }: PracticeFormProps)
     }
   };
 
+  const inputClasses = "w-full bg-black/20 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all";
+  const labelClasses = "block text-sm font-medium text-gray-300 mb-2";
+
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Practice Name */}
       <div>
-        <label htmlFor="practiceName" className="block text-sm font-semibold text-gray-700 mb-2">
-          Practice Name <span className="text-red-500">*</span>
+        <label htmlFor="practiceName" className={labelClasses}>
+          Practice Name <span className="text-red-400">*</span>
         </label>
         <input
           type="text"
           id="practiceName"
           value={formData.practiceName}
           onChange={(e) => handleChange('practiceName', e.target.value)}
-          className={`input-field ${errors.practiceName ? 'border-red-500' : ''}`}
+          className={`${inputClasses} ${errors.practiceName ? 'border-red-500/50 focus:ring-red-500/20' : ''}`}
           placeholder="e.g., Bright Smile Dental"
           disabled={isLoading}
         />
         {errors.practiceName && (
-          <p className="mt-1 text-sm text-red-600">{errors.practiceName}</p>
+          <p className="mt-1 text-sm text-red-400">{errors.practiceName}</p>
         )}
       </div>
 
       {/* Phone Number */}
       <div>
-        <label htmlFor="phoneNumber" className="block text-sm font-semibold text-gray-700 mb-2">
-          <Phone className="inline w-4 h-4 mr-1" />
-          Practice Phone Number <span className="text-red-500">*</span>
+        <label htmlFor="phoneNumber" className={labelClasses}>
+          <Phone className="inline w-4 h-4 mr-1 text-blue-400" />
+          Practice Phone Number <span className="text-red-400">*</span>
         </label>
         <input
           type="tel"
           id="phoneNumber"
           value={formData.phoneNumber}
           onChange={(e) => handleChange('phoneNumber', e.target.value)}
-          className={`input-field ${errors.phoneNumber ? 'border-red-500' : ''}`}
+          className={`${inputClasses} ${errors.phoneNumber ? 'border-red-500/50 focus:ring-red-500/20' : ''}`}
           placeholder="e.g., (555) 123-4567"
           disabled={isLoading}
         />
         {errors.phoneNumber && (
-          <p className="mt-1 text-sm text-red-600">{errors.phoneNumber}</p>
+          <p className="mt-1 text-sm text-red-400">{errors.phoneNumber}</p>
         )}
         <p className="mt-1 text-xs text-gray-500">
           The number that will receive the mystery-shopper call
@@ -100,30 +103,30 @@ export default function PracticeForm({ onSubmit, isLoading }: PracticeFormProps)
       {/* Location (Optional) */}
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-2">
-            <MapPin className="inline w-4 h-4 mr-1" />
-            City <span className="text-gray-400">(optional)</span>
+          <label htmlFor="city" className={labelClasses}>
+            <MapPin className="inline w-4 h-4 mr-1 text-purple-400" />
+            City <span className="text-gray-500">(optional)</span>
           </label>
           <input
             type="text"
             id="city"
             value={formData.city}
             onChange={(e) => handleChange('city', e.target.value)}
-            className="input-field"
+            className={inputClasses}
             placeholder="e.g., Austin"
             disabled={isLoading}
           />
         </div>
         <div>
-          <label htmlFor="state" className="block text-sm font-medium text-gray-700 mb-2">
-            State <span className="text-gray-400">(optional)</span>
+          <label htmlFor="state" className={labelClasses}>
+            State <span className="text-gray-500">(optional)</span>
           </label>
           <input
             type="text"
             id="state"
             value={formData.state}
             onChange={(e) => handleChange('state', e.target.value)}
-            className="input-field"
+            className={inputClasses}
             placeholder="e.g., TX"
             maxLength={2}
             disabled={isLoading}
@@ -133,16 +136,16 @@ export default function PracticeForm({ onSubmit, isLoading }: PracticeFormProps)
 
       {/* Primary Offer (Optional) */}
       <div>
-        <label htmlFor="primaryOffer" className="block text-sm font-medium text-gray-700 mb-2">
-          <DollarSign className="inline w-4 h-4 mr-1" />
-          Primary New Patient Offer <span className="text-gray-400">(optional)</span>
+        <label htmlFor="primaryOffer" className={labelClasses}>
+          <DollarSign className="inline w-4 h-4 mr-1 text-emerald-400" />
+          Primary New Patient Offer <span className="text-gray-500">(optional)</span>
         </label>
         <input
           type="text"
           id="primaryOffer"
           value={formData.primaryOffer}
           onChange={(e) => handleChange('primaryOffer', e.target.value)}
-          className="input-field"
+          className={inputClasses}
           placeholder="e.g., $99 New Patient Special"
           disabled={isLoading}
         />
@@ -153,25 +156,25 @@ export default function PracticeForm({ onSubmit, isLoading }: PracticeFormProps)
 
       {/* Insurance Type (Optional) */}
       <div>
-        <label htmlFor="insuranceType" className="block text-sm font-medium text-gray-700 mb-2">
-          <Shield className="inline w-4 h-4 mr-1" />
-          Insurance to Test <span className="text-gray-400">(optional)</span>
+        <label htmlFor="insuranceType" className={labelClasses}>
+          <Shield className="inline w-4 h-4 mr-1 text-indigo-400" />
+          Insurance to Test <span className="text-gray-500">(optional)</span>
         </label>
         <select
           id="insuranceType"
           value={formData.insuranceType}
           onChange={(e) => handleChange('insuranceType', e.target.value)}
-          className="input-field"
+          className={`${inputClasses} appearance-none bg-black/20`}
           disabled={isLoading}
         >
-          <option value="">Select an insurance...</option>
-          <option value="Delta Dental">Delta Dental</option>
-          <option value="Cigna">Cigna</option>
-          <option value="Aetna">Aetna</option>
-          <option value="MetLife">MetLife</option>
-          <option value="UnitedHealthcare">UnitedHealthcare</option>
-          <option value="Guardian">Guardian</option>
-          <option value="Humana">Humana</option>
+          <option value="" className="bg-gray-900 text-gray-400">Select an insurance...</option>
+          <option value="Delta Dental" className="bg-gray-900">Delta Dental</option>
+          <option value="Cigna" className="bg-gray-900">Cigna</option>
+          <option value="Aetna" className="bg-gray-900">Aetna</option>
+          <option value="MetLife" className="bg-gray-900">MetLife</option>
+          <option value="UnitedHealthcare" className="bg-gray-900">UnitedHealthcare</option>
+          <option value="Guardian" className="bg-gray-900">Guardian</option>
+          <option value="Humana" className="bg-gray-900">Humana</option>
         </select>
         <p className="mt-1 text-xs text-gray-500">
           Our AI caller will ask about this insurance
@@ -182,9 +185,16 @@ export default function PracticeForm({ onSubmit, isLoading }: PracticeFormProps)
       <button
         type="submit"
         disabled={isLoading}
-        className="btn-primary w-full text-lg py-4"
+        className="w-full py-4 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-lg shadow-lg shadow-blue-500/25 transition-all transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
       >
-        {isLoading ? 'Processing...' : 'Run My Phone Scorecard'}
+        {isLoading ? (
+          <span className="flex items-center justify-center gap-2">
+            <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            Processing...
+          </span>
+        ) : (
+          'Run My Phone Scorecard'
+        )}
       </button>
 
       {/* Disclaimer */}

@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import PracticeForm from '@/components/ui/PracticeForm';
 import ConsentModal from '@/components/ui/ConsentModal';
 import { PracticeInfo } from '@/lib/types';
-import { Phone, TrendingUp, Clock, Award } from 'lucide-react';
+import { Phone, TrendingUp, Clock, Award, ChevronRight, Star, Shield, Zap } from 'lucide-react';
 
 export default function Home() {
   const router = useRouter();
@@ -48,132 +48,114 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50">
+    <main className="min-h-screen bg-background relative overflow-hidden">
+      {/* Background Gradients */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+        <div className="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] bg-blue-600/20 rounded-full blur-[120px]" />
+        <div className="absolute top-[20%] -right-[10%] w-[40%] h-[40%] bg-indigo-600/20 rounded-full blur-[120px]" />
+        <div className="absolute -bottom-[10%] left-[20%] w-[30%] h-[30%] bg-purple-600/20 rounded-full blur-[120px]" />
+      </div>
+
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 shadow-sm">
+      <header className="relative z-10 border-b border-white/5 bg-background/50 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-primary-600 rounded-xl flex items-center justify-center">
-                <Phone className="w-6 h-6 text-white" />
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20">
+                <Phone className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">
-                  AI Patient Conversion Scorecard
+                <h1 className="text-xl font-bold text-white tracking-tight">
+                  Phone<span className="text-blue-400">Grades</span>
                 </h1>
-                <p className="text-sm text-gray-600">
-                  Professional phone call analysis for dental practices
+                <p className="text-xs text-gray-400 font-medium tracking-wide uppercase">
+                  AI Diagnostic Platform
                 </p>
               </div>
+            </div>
+            <div className="hidden md:flex items-center gap-6 text-sm font-medium text-gray-400">
+              <span className="hover:text-white transition-colors cursor-pointer">How it Works</span>
+              <span className="hover:text-white transition-colors cursor-pointer">Methodology</span>
+              <button className="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg transition-all border border-white/5">
+                Login
+              </button>
             </div>
           </div>
         </div>
       </header>
 
       {/* Hero Section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">
-            How Well Does Your Front Desk Convert New Patients?
+      <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-sm font-medium mb-8 animate-in fade-in slide-in-from-bottom-4">
+            <Zap className="w-4 h-4" />
+            <span>Powered by OpenAI Realtime Voice</span>
+          </div>
+
+          <h2 className="text-5xl md:text-7xl font-bold text-white mb-6 tracking-tight animate-in fade-in slide-in-from-bottom-6 duration-700">
+            How Well Does Your <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400">
+              Front Desk Convert?
+            </span>
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Get an instant, objective score based on a live mystery-shopper call
-            to your practice. Discover exactly where you're winning calls and where
-            you're losing them.
+
+          <p className="text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed animate-in fade-in slide-in-from-bottom-8 duration-700 delay-100">
+            Deploy an AI mystery shopper to audit your practice's phone performance.
+            Get an instant, objective scorecard based on 70+ data points.
           </p>
         </div>
 
-        {/* Features */}
-        <div className="grid md:grid-cols-3 gap-6 mb-12">
-          <div className="card text-center">
-            <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-              <Clock className="w-6 h-6 text-blue-600" />
-            </div>
-            <h3 className="text-lg font-semibold mb-2">Live Call Playback</h3>
-            <p className="text-gray-600 text-sm">
-              Listen to the mystery call in real-time as our AI caller speaks with
-              your front desk
-            </p>
-          </div>
-
-          <div className="card text-center">
-            <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-              <Award className="w-6 h-6 text-green-600" />
-            </div>
-            <h3 className="text-lg font-semibold mb-2">Objective Scoring</h3>
-            <p className="text-gray-600 text-sm">
-              70-point algorithmic rubric based on proven conversion best practices
-            </p>
-          </div>
-
-          <div className="card text-center">
-            <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-              <TrendingUp className="w-6 h-6 text-purple-600" />
-            </div>
-            <h3 className="text-lg font-semibold mb-2">Actionable Insights</h3>
-            <p className="text-gray-600 text-sm">
-              Get specific recommendations to improve your phone conversion rate
-            </p>
-          </div>
-        </div>
-
-        {/* Main Form */}
-        <div className="max-w-2xl mx-auto">
-          <div className="card">
-            <div className="mb-6">
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                Start Your Free Phone Scorecard
+        <div className="grid lg:grid-cols-2 gap-12 items-start">
+          {/* Main Form */}
+          <div className="glass-panel rounded-2xl p-8 animate-in fade-in slide-in-from-left-8 duration-700 delay-200">
+            <div className="mb-8">
+              <h3 className="text-2xl font-bold text-white mb-2">
+                Run Your Diagnostic
               </h3>
-              <p className="text-gray-600">
-                Fill in your practice information to begin the mystery-shopper test
+              <p className="text-gray-400">
+                Enter your practice details to initiate the live AI audit.
               </p>
             </div>
 
             <PracticeForm onSubmit={handleFormSubmit} isLoading={isLoading} />
           </div>
-        </div>
 
-        {/* How It Works */}
-        <div className="max-w-4xl mx-auto mt-16">
-          <h3 className="text-2xl font-bold text-gray-900 text-center mb-8">
-            How It Works
-          </h3>
-          <div className="grid md:grid-cols-4 gap-6">
-            <div className="text-center">
-              <div className="w-12 h-12 bg-primary-600 text-white rounded-full flex items-center justify-center mx-auto mb-3 text-lg font-bold">
-                1
+          {/* Features / Value Prop */}
+          <div className="space-y-8 animate-in fade-in slide-in-from-right-8 duration-700 delay-300">
+            <div className="glass-panel rounded-2xl p-6 flex items-start gap-4">
+              <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center flex-shrink-0">
+                <Clock className="w-6 h-6 text-blue-400" />
               </div>
-              <h4 className="font-semibold mb-2">Enter Details</h4>
-              <p className="text-sm text-gray-600">
-                Provide your practice name and phone number
-              </p>
+              <div>
+                <h3 className="text-lg font-semibold text-white mb-2">Live Audio Stream</h3>
+                <p className="text-gray-400 leading-relaxed">
+                  Listen in real-time as our advanced AI navigates your phone tree and speaks with your staff naturally.
+                </p>
+              </div>
             </div>
-            <div className="text-center">
-              <div className="w-12 h-12 bg-primary-600 text-white rounded-full flex items-center justify-center mx-auto mb-3 text-lg font-bold">
-                2
+
+            <div className="glass-panel rounded-2xl p-6 flex items-start gap-4">
+              <div className="w-12 h-12 rounded-xl bg-purple-500/10 flex items-center justify-center flex-shrink-0">
+                <Shield className="w-6 h-6 text-purple-400" />
               </div>
-              <h4 className="font-semibold mb-2">Live Call</h4>
-              <p className="text-sm text-gray-600">
-                Our AI calls your practice while you listen live
-              </p>
+              <div>
+                <h3 className="text-lg font-semibold text-white mb-2">Objective Scoring</h3>
+                <p className="text-gray-400 leading-relaxed">
+                  We evaluate speed to answer, tone, objection handling, and booking attempts against a strict 70-point rubric.
+                </p>
+              </div>
             </div>
-            <div className="text-center">
-              <div className="w-12 h-12 bg-primary-600 text-white rounded-full flex items-center justify-center mx-auto mb-3 text-lg font-bold">
-                3
+
+            <div className="glass-panel rounded-2xl p-6 flex items-start gap-4">
+              <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center flex-shrink-0">
+                <TrendingUp className="w-6 h-6 text-emerald-400" />
               </div>
-              <h4 className="font-semibold mb-2">AI Analysis</h4>
-              <p className="text-sm text-gray-600">
-                Advanced scoring evaluates every aspect of the call
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="w-12 h-12 bg-primary-600 text-white rounded-full flex items-center justify-center mx-auto mb-3 text-lg font-bold">
-                4
+              <div>
+                <h3 className="text-lg font-semibold text-white mb-2">Actionable Insights</h3>
+                <p className="text-gray-400 leading-relaxed">
+                  Receive a detailed PDF report with specific training recommendations to boost your conversion rate.
+                </p>
               </div>
-              <h4 className="font-semibold mb-2">Get Results</h4>
-              <p className="text-sm text-gray-600">
-                Receive detailed scorecard with actionable insights
-              </p>
             </div>
           </div>
         </div>

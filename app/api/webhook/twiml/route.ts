@@ -16,9 +16,9 @@ export async function POST(request: NextRequest) {
     const twiml = `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
   <Say voice="alice">Connecting you now.</Say>
-  <Start>
+  <Connect>
     <Stream url="wss://${baseUrl.replace('https://', '').replace('http://', '')}/api/webhook/media-stream?callId=${callId}" />
-  </Start>
+  </Connect>
   <Pause length="180" />
   <Say voice="alice">Thank you for your time. Goodbye.</Say>
 </Response>`;
